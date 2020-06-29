@@ -1,0 +1,6 @@
+---
+orgs:
+  - name: <github_organization_name>
+    pem:  <path_to_pem>
+    app_id:
+    installation_id:
