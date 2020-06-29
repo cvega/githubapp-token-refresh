@@ -8,7 +8,7 @@ Many services and vendors including GitHub provide simple authentication methods
 
 - Service accounts are real users with interactive login capabilities.
 - Users require a seat on GitHub 
-- Rotating account passwords can be difficult if mechanisms to facilitate rotation (e.g. Microsoft Key Vault or Hashicorp Vault) do not exist . This includes updating the consumers of the key.
+- Rotating account passwords can be difficult if mechanisms to facilitate rotation (e.g. Microsoft Key Vault or Hashicorp Vault) do not exist. This includes updating the consumers of the key.
 - You must generate a static password and a token for the service account which is really two passwords now.
 - It's not uncommon for a service account to get assigned elevated privileges.
 
@@ -34,9 +34,9 @@ OAuth provides `client_id` and `client_secret` (password) and Octokit/GitHub pro
 
 ## GitHub & Octokit.rb (example.rb)
 
-The security and overall cost (seat costs, time spent configuring service accounts) and benefits are fairly hard to deny but aren't entirely free either because changes to code are required. In this example I try to minimize the required code needed for a fully automated working example. It's not too far off from using Octokit.rb with a PAT. 
+The security and overall cost (seat costs, time spent configuring service accounts) benefits are fairly hard to deny but aren't entirely free either because changes to code are required. In this example I try to minimize the required code needed for a fully automated working example. It's not too far off from using Octokit.rb with a PAT. 
 
-Using a tool like Octokit.rb enables users to keep tokens fresh with minimal amounts of code. In the example below, a single request to the `org_repos` endpoint gets made once every 15 minutes. We let the script run for over an hour to show the behavior.
+In the example below, a single request to the `org_repos` endpoint gets made once every 15 minutes. We let the script run for over an hour to show the behavior.
 
 `example.rb` uses a simple `YAML` configuration file which is also included as `.config.yaml` in this repo.
 
@@ -89,6 +89,8 @@ ctrl-c to exit; otherwise runs infinitely
 Initialization immediatley recognizes that no token exists on startup and automatically refreshes itself. After an hour and exactly one second after the original token expired, the token gets refreshed automatically and the API can continue to make requests with the proper authentication/token always ensured.
 
 ## Simple Auth Class for Octokit.rb (libs/octokit-autorefresh.rb)
+
+Using a tool like Octokit.rb enables users to keep tokens fresh with trivial amounts of code.
 
 This example provides two classes:
 
