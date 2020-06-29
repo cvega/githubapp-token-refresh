@@ -8,10 +8,6 @@
 # the octokit client. This allows us to use short-lived keys and reduce the
 # overall amount of API requests.
 #
-# Using octokit with client_id and client_secret would provide a `check_token`
-# method for the client. However, this would result in an additional POST
-# request for every authenticated octokit request.
-#
 # NOTE:
 # This requires a Github App with read-only access to the repo data. For
 # example purposes, we only query for a single result/repo.
@@ -58,14 +54,11 @@ class GitHubAPIAuth
     @private_key = OpenSSL::PKey::RSA.new(File.read(@meta['pem']))
   end
 
-  # auth api
-  #
   # NOTE:
   # Determines if the token is expired using the expires_at attribute returned
   # from the octokit client. This prevents superfluous API requests. Tokens can
   # be forced to expire using the --expires-after parameter for this example.
-  # By default, they are valid for 1 hour. This reduces the amount of API
-  # requests significantly and avoids the use of client_id and client_secret.
+  # By default, they are valid for 1 hour.
   def auth
     if !@auth || Integer(Time.now + (3600 - @opts[:expires_after])) >= Integer(@expires_at)
       puts '- TOKEN STATUS: EXPIRED'
