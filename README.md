@@ -32,9 +32,9 @@ OAuth provides `client_id` and `client_secret` (password) and Octokit/GitHub pro
 [oauth_applications.rb#L31](https://github.com/octokit/octokit.rb/blob/4ab6bb3f5e5a5a5400f21cc7b915a43e3883afc8/lib/octokit/client/oauth_applications.rb#L31)
 
 
-## Octokit.rb (example.rb)
+## GitHub & Octokit.rb (example.rb)
 
-The security and overall cost (seat costs, time spent configuring service accounts) and benefits are fairly hard to deny but aren't entirely free either because changes to code are required. In this example I try to minimize the required code needed for a fully automated working example.
+The security and overall cost (seat costs, time spent configuring service accounts) and benefits are fairly hard to deny but aren't entirely free either because changes to code are required. In this example I try to minimize the required code needed for a fully automated working example. It's not too far off from using Octokit.rb with a PAT. 
 
 Using a tool like Octokit.rb enables users to keep tokens fresh with minimal amounts of code. In the example below, a single request to the `org_repos` endpoint gets made once every 15 minutes. We let the script run for over an hour to show the behavior.
 
@@ -103,6 +103,7 @@ The sizeable difference here between a PAT and GitHub App is fairly simple. A si
 ```ruby
 @meta['pem'], @meta['app_id'], @meta['installation_id']
 ```
+
 ### Example Auth Class
 ```Ruby
 # frozen_string_literal: true
@@ -143,19 +144,18 @@ class GitHubAPI < GitHubAPIAuth
     end
   end
 end
-
 ```
 
 ### NOTES
 The `bearer` token is only valid for a single second in the example class. We assume when using a chained method that the subsequent requests will happen in the one second time frame, however that may not be a safe assumption and doesn’t account for things like latency. While I didn't experience any issues, you may want to bump this value. Last, if the token is within 60 seconds of expiring we can renew it, this mitigates edge cases where the token may be valid at the time of the check but not at the time of the API call. This would be rare, also but included for demonstration.
 
 ## Recap
-- Short lived JWT tokens
-- Short lived API tokens
+- Short lived JWT tokens (1 second)
+- Short lived API tokens (3600 seconds)
 - Inexpensive time validation for tokens
 - Simple inheritance model for authorization against API endpoints
 - Easier to revoke access in the event of a security incident
 - No service account required
-- No identity (idP) or ADFS/LDAP required
+- No identity (idP) or ADFS/LDAP integration required
 - PoLP
 
