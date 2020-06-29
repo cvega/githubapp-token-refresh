@@ -99,6 +99,10 @@ This example provides two classes:
 
 The sizeable difference here between a PAT and GitHub App is fairly simple. A single time check determinse if the token is still valid and if not, create a fresh instance of the client which gets a new access token. 
 
+#### **Required class initialization parameters**
+```ruby
+@meta['pem'], @meta['app_id'], @meta['installation_id']
+```
 ### Example Auth Class
 ```Ruby
 # frozen_string_literal: true
