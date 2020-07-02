@@ -1,5 +1,5 @@
 # :factory: :shower: Automatically refreshing GitHub App tokens
-#### using Octokit.rb :octocat:
+#### using Octokit.rb and PyGitHub :octocat: (and more to follow soon!)
 
 ## Background
 Many services and vendors including GitHub provide simple authentication methods in particular a personal access token or PAT. This enables users to chain tooling together using a token that belongs to them or through the creation of a service account. While the PAT enables users to interact with services via the API, it widens potential attack surfaces should the PAT become compromised. GitHub App is focusing on removing the need for service accounts and providing a more secure environment that is easier for people and teams to manage.
@@ -32,17 +32,17 @@ OAuth provides `client_id` and `client_secret` (password) and Octokit/GitHub pro
 [oauth_applications.rb#L31](https://github.com/octokit/octokit.rb/blob/4ab6bb3f5e5a5a5400f21cc7b915a43e3883afc8/lib/octokit/client/oauth_applications.rb#L31)
 
 
-## GitHub & Octokit.rb (example.rb)
+## GitHub example.*
 
 The security and overall cost (seat costs, time spent configuring service accounts) benefits are fairly hard to deny but aren't entirely free either because changes to code are required. In this example I try to minimize the required code needed for a fully automated working example. It's not too far off from using Octokit.rb with a PAT. 
 
-In the example below, a single request to the `org_repos` endpoint gets made once every 15 minutes. We let the script run for over an hour to show the behavior.
+In the examples, a single request to the `org_repos` endpoint gets made once every 15 minutes. We let the script run for over an hour to show the behavior.
 
-`example.rb` uses a simple `YAML` configuration file which is also included as `.config.yaml` in this repo.
+The example files use a simple `YAML` configuration file which is also included as `.config.yaml` in this repo.
 
 ```bash
- ./example.rb --sleep 900
-EXAMPLE AUTOMATED TOKEN REFRESH USING GITHUB APP AND OCTOKIT.RB
+ ./example.* --sleep 900
+EXAMPLE AUTOMATED TOKEN REFRESH USING GITHUB APP AND {API library}
 ctrl-c to exit; otherwise runs infinitely
 
 - TIMESTAMP: 2020-06-28 06:00:10 UTC
@@ -88,9 +88,9 @@ ctrl-c to exit; otherwise runs infinitely
 ```
 Initialization immediatley recognizes that no token exists on startup and automatically refreshes itself. After an hour and exactly one second after the original token expired, the token gets refreshed automatically and the API can continue to make requests with the proper authentication/token always ensured.
 
-## Simple Auth Class for Octokit.rb (libs/octokit-autorefresh.rb)
+## Simple Auth Class ({language-package}/autorefresh)
 
-Using a tool like Octokit.rb enables users to keep tokens fresh with trivial amounts of code.
+Using the APIenables users to keep tokens fresh with trivial amounts of code.
 
 This example provides two classes:
 
@@ -106,7 +106,7 @@ The sizeable difference here between a PAT and GitHub App is fairly simple. A si
 @meta['pem'], @meta['app_id'], @meta['installation_id']
 ```
 
-### Example Auth Class
+### Example Ruby Auth Class
 ```Ruby
 # frozen_string_literal: true
 
@@ -147,9 +147,54 @@ class GitHubAPI < GitHubAPIAuth
   end
 end
 ```
-
-### NOTES
+### Octokit.rb NOTES
 The `bearer` token is only valid for a single second in the example class. We assume when using a chained method that the subsequent requests will happen in the one second time frame, however that may not be a safe assumption and doesn’t account for things like latency. While I didn't experience any issues, you may want to bump this value. Last, if the token is within 60 seconds of expiring we can renew it, this mitigates edge cases where the token may be valid at the time of the check but not at the time of the API call. This would be rare, also but included for demonstration.
+
+
+### Example Python Auth Class
+```python
+from datetime import datetime, timezone
+from github import Github, GithubIntegration
+import jwt
+
+
+class GitHubAPIAuth(object):
+    def __init__(self, meta):
+        self.meta = meta
+        self._auth, self.expires_at, self.gh = None, None, None
+        with open(self.meta["pem"]) as private_key:
+            self.private_key = private_key.read()
+
+    @staticmethod
+    def auth(func):
+        def wrapper(self, *args, **kwargs):
+            self.github_client() if not self.gh or self.is_expired() else None
+            return func(self, *args, **kwargs)
+        return wrapper
+
+    def is_expired(self):
+        return datetime.now().timestamp() + 60 >= self.expires_at.timestamp()
+
+    def token(self):
+        return GithubIntegration(
+            self.meta.get("app_id"), self.private_key
+        ).get_access_token(self.meta.get("installation_id"))
+
+    def github_client(self):
+        self._auth = self.token()
+        self.gh = Github(self._auth.token)
+        self.expires_at = self._auth.expires_at.replace(tzinfo=timezone.utc)
+
+
+class GitHubAPI(GitHubAPIAuth):
+    @GitHubAPIAuth.auth
+    def org_repos(self):
+        self.org = self.gh.get_organization(self.meta.get("name"))
+        return self.org.get_repos(type="private")a
+```
+
+### PyGitHub NOTES:
+Unlike Octokit.rb, the default JWT token has a life span of 60 seconds.
 
 ## Recap
 - Short lived JWT tokens (1 second)
