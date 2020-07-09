@@ -1,0 +1,15 @@
+{
+  "name": "githubapp-token-refresh",
+  "version": "1.0.0",
+  "description": "Automated githubapp token refresh example app",
+  "main": "example.js",
+  "repository": "https://github.com/cvega/githubapp-token-refresh",
+  "author": "@cvega",
+  "license": "MIT",
+  "dependencies": {
+    "@octokit/app": "^4.2.0",
+    "@octokit/auth-app": "^2.4.7",
+    "@octokit/rest": "^18.0.0",
+    "js-yaml": "^3.14.0"
+  }
+}
