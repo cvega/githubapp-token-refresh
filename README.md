@@ -1,5 +1,10 @@
 # :factory: :shower: Automatically refreshing GitHub App tokens
-#### using :octocat:
+
+This repo is intended for people looking to understand more about GitHub apps and what an implmentation from a code perspective looks. Where possible the examples look to decorate function calls to the GitHub API. All of the code samples include an example script that share identical output with slight deviances (I'm looking at you Golang). There is no magic, just a simple check to validate the token and making sure our function calls always have a valid key.
+
+I created this because I wasn't seeing a lot of code documentation and I wanted to provide something simple that can help people get up and running with GitHub App quickly with minimal. What I'm really hoping people take notice of is how similar this code is to using a PAT but also the benefits of not using long lived service accounts and passwords.
+
+#### The Examples :octocat:
 - Ruby and Octokit.rb
 - Python and PyGitHub
 - Go and Go-GitHub
@@ -38,9 +43,9 @@ OAuth provides `client_id` and `client_secret` (password) and Octokit/GitHub pro
 [oauth_applications.rb#L31](https://github.com/octokit/octokit.rb/blob/4ab6bb3f5e5a5a5400f21cc7b915a43e3883afc8/lib/octokit/client/oauth_applications.rb#L31)
 
 
-## GitHub example.*
+## Code example.*
 
-The security and overall cost (seat costs, time spent configuring service accounts) benefits are fairly hard to deny but aren't entirely free either because changes to code are required. In this example I try to minimize the required code needed for a fully automated working example. It's not too far off from using Octokit.rb with a PAT. 
+The security and overall cost (seat costs, time spent configuring service accounts) benefits are fairly hard to deny but aren't entirely free either because changes to code are required. In this example I try to minimize the required code needed for a fully automated working example.
 
 In the examples, a single request to the `org_repos` endpoint gets made once every 15 minutes. We let the script run for over an hour to show the behavior.
 
@@ -98,12 +103,12 @@ Initialization recognizes that no token exists on startup and automatically refr
 
 Using the API enables users to keep tokens fresh with trivial amounts of code.
 
-This example provides two classes:
+This example provides two classes unless otherwise noted:
 
 - Authentication for API requests
 - Requests to API endpoints wrapped in `auth `
 
-The sizeable difference here between a PAT and GitHub App is fairly simple. A single time check determines if the token is still valid and if not, create a fresh instance of the client which gets a new access token. 
+The sizeable difference here between a PAT and GitHub App is fairly simple. A single time check (`expires_at`) determines if the token is still valid and if not, create a fresh instance of the client which gets a new access token. 
 
 ## Recap
 - Short lived JWT tokens
