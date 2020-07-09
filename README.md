@@ -1,16 +1,11 @@
 # :factory: :shower: Automatically refreshing GitHub App tokens
 #### using :octocat:
-Ruby and Octokit.rb
-
-Python and PyGitHub
-
-Go and Go-GitHub
-
-Javascript and Octokit.js
-
-C (coming soon, because why not)
-
-Bash (coming soon)
+- Ruby and Octokit.rb
+- Python and PyGitHub
+- Go and Go-GitHub
+- Javascript and Octokit.js
+- C (coming soon, because why not)
+- Bash (coming soon)
 
 ## Background
 Many services and vendors including GitHub provide simple authentication methods in particular a personal access token or PAT. This enables users to chain tooling together using a token that belongs to them or through the creation of a service account. While the PAT enables users to interact with services via the API, it widens potential attack surfaces should the PAT become compromised. GitHub App is focusing on removing the need for service accounts and providing a more secure environment that is easier for people and teams to manage.
