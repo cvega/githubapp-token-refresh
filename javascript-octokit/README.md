@@ -72,6 +72,3 @@ yaml.safeLoad(fs.readFileSync('.config.yml', 'utf8')).orgs.forEach(meta => {
   });
 });
 ```
-
-### Octokit.rb NOTES
-The `bearer` token is only valid for a single second in the example class. We assume when using a chained method that the subsequent requests will happen in the one second time frame, however that may not be a safe assumption and doesn’t account for things like latency. While I didn't experience any issues, you may want to bump this value. Last, if the token is within 60 seconds of expiring we can renew it, this mitigates edge cases where the token may be valid at the time of the check but not at the time of the API call. This would be rare, also but included for demonstration.
