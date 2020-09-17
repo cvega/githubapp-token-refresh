@@ -44,7 +44,7 @@ class GitHubAPI(GitHubAPIAuth):
     @GitHubAPIAuth.auth
     def org_repos(self):
         self.org = self.gh.get_organization(self.meta.get("name"))
-        return self.org.get_repos(type="private")a
+        return self.org.get_repos(type="private")
 ```
 
 ### PyGitHub NOTES:
