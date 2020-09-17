@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
 from github import Github, GithubIntegration
-import jwt
 
 
 class GitHubAPIAuth(object):
