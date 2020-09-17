@@ -9,7 +9,6 @@ meta['pem'], meta['app_id'], meta['installation_id']
 ```python
 from datetime import datetime, timezone
 from github import Github, GithubIntegration
-import jwt
 
 
 class GitHubAPIAuth(object):
