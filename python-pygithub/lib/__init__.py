@@ -15,18 +15,29 @@ class GitHubAPIAuth(object):
             self.github_client() if not self.gh or self.is_expired() else None
             return func(self, *args, **kwargs)
         return wrapper
-    
+
     def is_expired(self):
         return datetime.now().timestamp() + 60 >= self.expires_at.timestamp()
 
     def token(self):
-        return GithubIntegration(
-            self.meta.get("app_id"), self.private_key
-        ).get_access_token(self.meta.get("installation_id"))
+        kwargs = {
+            "integration_id": self.meta.get("app_id"),
+            "private_key": self.private_key,
+        }
+        if self.meta.get("base_url"):
+            kwargs["base_url"] = self.meta.get("base_url")
+        integration = GithubIntegration(
+            **kwargs,
+        )
+        token = integration.get_access_token(self.meta.get("installation_id"))
+        return token
 
     def github_client(self):
         self._auth = self.token()
-        self.gh = Github(self._auth.token)
+        kwargs = {"login_or_token": self._auth.token}
+        if self.meta.get("base_url"):
+            kwargs["base_url"] = self.meta.get("base_url")
+        self.gh = Github(**kwargs)
         self.expires_at = self._auth.expires_at.replace(tzinfo=timezone.utc)
 
 
