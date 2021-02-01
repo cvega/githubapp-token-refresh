@@ -12,10 +12,17 @@ class GitHubAPIAuth(object):
     @staticmethod
     def auth(func):
         def wrapper(self, *args, **kwargs):
-            self.github_client() if not self.gh or self.is_expired() else None
+            if not self.gh or self.is_expired():
+                print("- TOKEN STATUS: EXPIRED")
+                self.github_client()
+                print("- TOKEN STATUS: REFRESHED")
+            print("- TOKEN STATUS: CURRENT")
+            print(f"- TOKEN EXPIRY: {self.expires_at.strftime('%Y-%m-%d %H:%M:%S')}")
+
             return func(self, *args, **kwargs)
+
         return wrapper
-    
+
     def is_expired(self):
         return datetime.now().timestamp() + 60 >= self.expires_at.timestamp()
 
