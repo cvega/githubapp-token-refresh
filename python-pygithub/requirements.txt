@@ -1,2 +1,2 @@
-PyJWT==1.7.1
+PyJWT==2.4.0
 PyGithub==1.51
