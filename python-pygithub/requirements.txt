@@ -1,2 +1,4 @@
 PyJWT==2.4.0
 PyGithub==1.51
+cryptography==37.0.4
+PyYAML==6.0
